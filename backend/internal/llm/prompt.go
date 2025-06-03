@@ -4,17 +4,26 @@ import (
     "bytes"
     "encoding/json"
     "net/http"
-
+    "time"
     "github.com/gin-gonic/gin"
+    "github.com/google/uuid"
+    "github.com/officiallyutso/strato-ai-backend/internal/models"
+    "github.com/officiallyutso/strato-ai-backend/internal/storage"
 )
 
 type PromptRequest struct {
-    Prompt   string `json:"prompt"`
-    Provider string `json:"provider"` // e.g., "huggingface"
-    Model    string `json:"model"`    // e.g., "google/flan-t5-large"
-    APIKey   string `json:"api_key"`  // Optional
+    Prompt    string   `json:"prompt"`
+    Providers []string `json:"providers"` // List of provider IDs to query
+    UserID    string   `json:"user_id"`
 }
 
+type PromptResponse struct {
+    ChatID    string            `json:"chat_id"`
+    Prompt    string            `json:"prompt"`
+    Responses []models.Response `json:"responses"`
+}
+
+// HandlePrompt processes a prompt across multiple LLM providers
 func HandlePrompt(c *gin.Context) {
     var req PromptRequest
     if err := c.BindJSON(&req); err != nil {
@@ -22,31 +31,43 @@ func HandlePrompt(c *gin.Context) {
         return
     }
 
-    // HuggingFace Example
-    if req.Provider == "huggingface" {
-        url := "https://api-inference.huggingface.co/models/" + req.Model
-        client := &http.Client{}
+    // Create a new chat session
+    chat := models.Chat{
+        UserID:    req.UserID,
+        Prompt:    req.Prompt,
+        Responses: []models.Response{},
+        CreatedAt: time.Now(),
+    }
 
-        body, _ := json.Marshal(map[string]string{"inputs": req.Prompt})
-        request, _ := http.NewRequest("POST", url, bytes.NewBuffer(body))
-        request.Header.Set("Authorization", "Bearer "+req.APIKey)
-        request.Header.Set("Content-Type", "application/json")
-
-        resp, err := client.Do(request)
-        if err != nil {
-            c.JSON(500, gin.H{"error": err.Error()})
-            return
-        }
-        defer resp.Body.Close()
-
-        var response interface{}
-        json.NewDecoder(resp.Body).Decode(&response)
-
-        c.JSON(200, gin.H{
-            "response": response,
-        })
+    // Get user's API keys
+    userKeys, err := storage.GetUserAPIKeys(req.UserID)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to retrieve API keys"})
         return
     }
 
-    c.JSON(400, gin.H{"error": "provider not supported"})
+    // Map of provider ID to API key
+    keyMap := make(map[string]string)
+    for _, key := range userKeys {
+        keyMap[key.Provider] = key.Key
+    }
+
+    // Process each provider
+    for _, providerID := range req.Providers {
+        response := processProvider(providerID, req.Prompt, keyMap[providerID])
+        chat.Responses = append(chat.Responses, response)
+    }
+
+    // Save the chat session
+    chatID, err := storage.SaveChat(chat)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save chat"})
+        return
+    }
+
+    c.JSON(http.StatusOK, PromptResponse{
+        ChatID:    chatID,
+        Prompt:    req.Prompt,
+        Responses: chat.Responses,
+    })
 }

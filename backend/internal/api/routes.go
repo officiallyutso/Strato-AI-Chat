@@ -110,7 +110,6 @@ func getUserAPIKeys(c *gin.Context) {
 
 // getProviders returns available LLM providers
 func getProviders(c *gin.Context) {
-    // In a real implementation, these would come from a database
     providers := []models.LLMProvider{
         {
             ID:          "huggingface",

@@ -46,19 +46,18 @@ func HandlePrompt(c *gin.Context) {
         return
     }
 
-    // Map of provider ID to API key
+    // omne map of provider ID to API key
     keyMap := make(map[string]string)
     for _, key := range userKeys {
         keyMap[key.Provider] = key.Key
     }
 
-    // Process each provider
     for _, providerID := range req.Providers {
         response := processProvider(providerID, req.Prompt, keyMap[providerID])
         chat.Responses = append(chat.Responses, response)
     }
 
-    // Save the chat session
+    // Saveddd chat session
     chatID, err := storage.SaveChat(chat)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save chat"})
@@ -70,4 +69,49 @@ func HandlePrompt(c *gin.Context) {
         Prompt:    req.Prompt,
         Responses: chat.Responses,
     })
+}
+
+
+// processProvider handles sending a prompt to a specific LLM provider
+func processProvider(providerID, prompt, apiKey string) models.Response {
+    response := models.Response{
+        ID:        uuid.New().String(),
+        Provider:  providerID,
+        CreatedAt: time.Now(),
+    }
+
+    // Handle different providers
+    switch providerID {
+    case "huggingface":
+        result, err := callHuggingFace(prompt, apiKey)
+        if err != nil {
+            response.Error = err.Error()
+        } else {
+            response.Content = result
+            response.Model = "huggingface/default"
+        }
+
+    case "gemini":
+        result, err := callGemini(prompt, apiKey)
+        if err != nil {
+            response.Error = err.Error()
+        } else {
+            response.Content = result
+            response.Model = "gemini-pro"
+        }
+
+    case "mistral":
+        result, err := callMistral(prompt, apiKey)
+        if err != nil {
+            response.Error = err.Error()
+        } else {
+            response.Content = result
+            response.Model = "mistral-small"
+        }
+
+    default:
+        response.Error = "unsupported provider"
+    }
+
+    return response
 }

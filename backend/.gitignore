@@ -1,0 +1,34 @@
+# Binaries
+/bin/
+/build/
+/out/
+
+# Dependency directories (if vendoring)
+vendor/
+
+# Go build cache
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+
+# Output of 'go build' and 'go install'
+/*_test
+*_test.go
+
+# IDE/editor specific
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment variables or secret files
+.env
+internal/storage

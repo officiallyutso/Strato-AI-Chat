@@ -115,3 +115,42 @@ func processProvider(providerID, prompt, apiKey string) models.Response {
 
     return response
 }
+
+// callHuggingFace sends a prompt to HuggingFace API
+func callHuggingFace(prompt, apiKey string) (string, error) {
+    url := "https://api-inference.huggingface.co/models/google/flan-t5-large"
+    client := &http.Client{}
+
+    body, _ := json.Marshal(map[string]string{"inputs": prompt})
+    request, _ := http.NewRequest("POST", url, bytes.NewBuffer(body))
+    request.Header.Set("Authorization", "Bearer "+apiKey)
+    request.Header.Set("Content-Type", "application/json")
+
+    resp, err := client.Do(request)
+    if err != nil {
+        return "", err
+    }
+    defer resp.Body.Close()
+
+    var result []string
+    if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+        return "", err
+    }
+
+    if len(result) > 0 {
+        return result[0], nil
+    }
+    return "", nil
+}
+
+// callGemini sends a prompt to Google's Gemini API
+func callGemini(prompt, apiKey string) (string, error) {
+    // This would be a real API cali in production
+    return "This is a simulated response from Gemini: " + prompt, nil
+}
+
+// callMistral sends a prompt to Mistral API
+func callMistral(prompt, apiKey string) (string, error) {
+    // This would be a real API call in production
+    return "This is a simulated response from Mistral: " + prompt, nil
+}

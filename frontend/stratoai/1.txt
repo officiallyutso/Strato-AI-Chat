@@ -1,0 +1,215 @@
+import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:stratoai/models/llm_model.dart';
+
+class LLMService {
+
+  final Dio _dio = Dio();
+
+  static List<LLMModel> getAvailableModels() {
+  return [
+    // Gemini
+    LLMModel(
+      id: 'gemini-pro',
+      name: 'Gemini Pro (RATE LIMIT)',
+      provider: 'Google',
+      description: 'Google\'s most capable model',
+      iconPath: 'assets/icons/gemini.png',
+    ),
+
+    // OpenRouter Free Models
+    LLMModel(
+      id: 'mistralai/mistral-7b-instruct',
+      name: 'Mistral 7B Instruct',
+      provider: 'OpenRouter',
+      description: 'Mistral AI\'s 7B parameter instruction-tuned model',
+      iconPath: 'assets/icons/mistral.png',
+    ),
+    LLMModel(
+      id: 'mistralai/mixtral-8x7b-instruct',
+      name: 'Mixtral 8x7B Instruct',
+      provider: 'OpenRouter',
+      description: 'High-quality sparse mixture of experts model with open weights',
+      iconPath: 'assets/icons/mistral.png',
+    ),
+    LLMModel(
+      id: 'meta-llama/llama-3-8b-instruct',
+      name: 'Llama 3 8B Instruct',
+      provider: 'OpenRouter',
+      description: 'Meta\'s Llama 3 8B instruction-tuned model',
+      iconPath: 'assets/icons/llama.png',
+    ),
+    LLMModel(
+      id: 'meta-llama/llama-3-70b-instruct',
+      name: 'Llama 3 70B Instruct',
+      provider: 'OpenRouter',
+      description: 'Meta\'s Llama 3 70B instruction-tuned model',
+      iconPath: 'assets/icons/llama.png',
+    ),
+    LLMModel(
+      id: 'gryphe/mythomax-l2-13b',
+      name: 'MythoMax L2 13B',
+      provider: 'OpenRouter',
+      description: 'Fantasy/RP model built on LLaMA 2 (13B)',
+      iconPath: 'assets/icons/mythomax.png',
+    ),
+
+    // HuggingFace Models (Only Zephyr is working for now)
+    LLMModel(
+      id: 'HuggingFaceH4/zephyr-7b-beta',
+      name: 'Zephyr 7B Beta',
+      provider: 'HuggingFace',
+      description: 'Zephyr conversational model',
+      iconPath: 'assets/icons/huggingface.png',
+    ),
+
+    // Other HF models not working yet
+    LLMModel(
+      id: 'mistralai/Mistral-7B-Instruct-v0.2',
+      name: 'Mistral 7B Instruct v0.2 (COMING SOON)',
+      provider: 'HuggingFace',
+      description: 'Mistral instruction-following model',
+      iconPath: 'assets/icons/mistral.png',
+      isAvailable: false,
+    ),
+    LLMModel(
+      id: 'tiiuae/falcon-7b-instruct',
+      name: 'Falcon 7B Instruct (COMING SOON)',
+      provider: 'HuggingFace',
+      description: 'Falcon instruction model',
+      iconPath: 'assets/icons/falcon.png',
+      isAvailable: false,
+    ),
+    LLMModel(
+      id: 'TinyLlama/TinyLlama-1.1B-Chat-v1.0',
+      name: 'TinyLlama 1.1B Chat (COMING SOON)',
+      provider: 'HuggingFace',
+      description: 'Compact conversational model',
+      iconPath: 'assets/icons/tinyllama.png',
+      isAvailable: false,
+    ),
+    LLMModel(
+      id: 'cerebras/btlm-3b-8k-base',
+      name: 'BTLM 3B 8K Base (COMING SOON)',
+      provider: 'HuggingFace',
+      description: 'Efficient 3B parameter model with performance comparable to 7B models',
+      iconPath: 'assets/icons/cerebras.png',
+      isAvailable: false,
+    ),
+  ];
+}
+
+
+  Future<String> generateResponse(String modelId, String prompt) async {
+    try {
+      final model = getAvailableModels().firstWhere((m) => m.id == modelId);
+      
+      switch (model.provider) {
+        case 'Google':
+          return await _callGemini(modelId, prompt);
+        case 'OpenRouter':
+          return await _callOpenRouter(modelId, prompt);
+        case 'HuggingFace':
+          return await _callHuggingFace(modelId, prompt);
+        default:
+          throw Exception('Unsupported provider: ${model.provider}');
+      }
+    } catch (e) {
+      throw Exception('Failed to generate response: $e');
+    }
+  }
+
+  Future<String> _callGemini(String modelId, String prompt) async {
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+    
+    final response = await _dio.post(
+      '$url?key=$_geminiApiKey',
+      data: {
+        'contents': [
+          {
+            'parts': [
+              {'text': prompt}
+            ]
+          }
+        ],
+        'generationConfig': {
+          'temperature': 0.7,
+          'topK': 40,
+          'topP': 0.95,
+          'maxOutputTokens': 1024,
+        }
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = response.data;
+      return data['candidates'][0]['content']['parts'][0]['text'];
+    } else {
+      throw Exception('Gemini API error: ${response.statusMessage}');
+    }
+  }
+
+  Future<String> _callOpenRouter(String modelId, String prompt) async {
+    const url = 'https://openrouter.ai/api/v1/chat/completions';
+    
+    final response = await _dio.post(
+      url,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $_openRouterApiKey',
+          'Content-Type': 'application/json',
+        },
+      ),
+      data: {
+        'model': modelId,
+        'messages': [
+          {'role': 'user', 'content': prompt}
+        ],
+        'temperature': 0.7,
+        'max_tokens': 1024,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = response.data;
+      return data['choices'][0]['message']['content'];
+    } else {
+      throw Exception('OpenRouter API error: ${response.statusMessage}');
+    }
+  }
+
+  Future<String> _callHuggingFace(String modelId, String prompt) async {
+    final url = 'https://api-inference.huggingface.co/models/$modelId';
+    
+    final response = await _dio.post(
+      url,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $_huggingFaceToken',
+          'Content-Type': 'application/json',
+        },
+      ),
+      data: {
+        'inputs': prompt,
+        'parameters': {
+          'temperature': 0.7,
+          'max_length': 1024,
+          'return_full_text': false,
+        },
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = response.data;
+      if (data is List && data.isNotEmpty) {
+        return data[0]['generated_text'] ?? 'No response generated';
+      } else if (data is Map && data.containsKey('generated_text')) {
+        return data['generated_text'];
+      } else {
+        return 'Unexpected response format';
+      }
+    } else {
+      throw Exception('HuggingFace API error: ${response.statusMessage}');
+    }
+  }
+}

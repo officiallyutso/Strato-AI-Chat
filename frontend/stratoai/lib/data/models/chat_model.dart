@@ -61,3 +61,80 @@ class Chat extends Equatable {
     );
   }
 }
+
+@JsonSerializable()
+class Message extends Equatable {
+  final String id;
+  final String content;
+  final String role; // 'user' or 'assistant'
+  final DateTime timestamp;
+  final List<Response>? responses;
+
+  const Message({
+    required this.id,
+    required this.content,
+    required this.role,
+    required this.timestamp,
+    this.responses,
+  });
+
+  factory Message.fromJson(Map<String, dynamic> json) =>
+      _$MessageFromJson(json);
+  Map<String, dynamic> toJson() => _$MessageToJson(this);
+
+  @override
+  List<Object?> get props => [id, content, role, timestamp, responses];
+
+  Message copyWith({
+    String? id,
+    String? content,
+    String? role,
+    DateTime? timestamp,
+    List<Response>? responses,
+  }) {
+    return Message(
+      id: id ?? this.id,
+      content: content ?? this.content,
+      role: role ?? this.role,
+      timestamp: timestamp ?? this.timestamp,
+      responses: responses ?? this.responses,
+    );
+  }
+}
+
+@JsonSerializable()
+class Response extends Equatable {
+  final String id;
+  @JsonKey(name: 'model_id')
+  final String modelId;
+  final String content;
+  final String provider;
+
+  const Response({
+    required this.id,
+    required this.modelId,
+    required this.content,
+    required this.provider,
+  });
+
+  factory Response.fromJson(Map<String, dynamic> json) =>
+      _$ResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$ResponseToJson(this);
+
+  @override
+  List<Object?> get props => [id, modelId, content, provider];
+
+  Response copyWith({
+    String? id,
+    String? modelId,
+    String? content,
+    String? provider,
+  }) {
+    return Response(
+      id: id ?? this.id,
+      modelId: modelId ?? this.modelId,
+      content: content ?? this.content,
+      provider: provider ?? this.provider,
+    );
+  }
+}

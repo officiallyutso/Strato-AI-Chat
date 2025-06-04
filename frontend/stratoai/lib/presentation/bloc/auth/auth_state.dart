@@ -17,7 +17,7 @@ class Authenticated extends AuthState {
   const Authenticated(this.user);
 
   @override
-  List<Object> get props => [user.uid];
+  List<Object> get props => [user];
 }
 
 class Unauthenticated extends AuthState {}

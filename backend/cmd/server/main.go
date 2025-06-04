@@ -14,7 +14,9 @@ func main() {
     serviceAccountPath := os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")
     projectID := os.Getenv("FIREBASE_PROJECT_ID")
     if serviceAccountPath != "" && projectID != "" {
-        storage.InitFirestore(serviceAccountPath, projectID)
+        if err := storage.InitFirestore(serviceAccountPath, projectID); err != nil {
+            log.Fatalf("Failed to initialize Firestore: %v", err)
+        }
     } else {
         log.Println("Warning: Firestore not initialized. Set GOOGLE_APPLICATION_CREDENTIALS and FIREBASE_PROJECT_ID env vars.")
     }

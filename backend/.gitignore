@@ -31,4 +31,3 @@ Thumbs.db
 
 # Environment variables or secret files
 .env
-internal/storage

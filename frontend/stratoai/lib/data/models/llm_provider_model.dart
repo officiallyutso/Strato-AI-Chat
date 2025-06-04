@@ -55,3 +55,28 @@ class LLMModel extends Equatable {
     );
   }
 }
+
+@JsonSerializable()
+class APIKey extends Equatable {
+  final String id;
+  @JsonKey(name: 'user_id')
+  final String userId;
+  final String provider;
+  final String key;
+  @JsonKey(name: 'created_at')
+  final DateTime createdAt;
+
+  const APIKey({
+    required this.id,
+    required this.userId,
+    required this.provider,
+    required this.key,
+    required this.createdAt,
+  });
+
+  factory APIKey.fromJson(Map<String, dynamic> json) =>
+      _$APIKeyFromJson(json);
+
+  Map<String, dynamic> toJson() => _$APIKeyToJson(this);
+
+}

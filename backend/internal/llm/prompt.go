@@ -76,3 +76,84 @@ func HandlePrompt(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+func generateResponses(userID string, modelIDs []string, prompt string) []models.Response {
+	var responses []models.Response
+	var mu sync.Mutex
+	var wg sync.WaitGroup
+
+	for _, modelID := range modelIDs {
+		wg.Add(1)
+		go func(id string) {
+			defer wg.Done()
+			
+			response := generateSingleResponse(userID, id, prompt)
+			
+			mu.Lock()
+			responses = append(responses, response)
+			mu.Unlock()
+		}(modelID)
+	}
+
+	wg.Wait()
+	return responses
+}
+
+func generateSingleResponse(userID, modelID, prompt string) models.Response {
+	response := models.Response{
+		ID:      uuid.New().String(),
+		ModelID: modelID,
+		Content: "",
+	}
+
+	// Find model info
+	var model *LLMModel
+	for _, m := range GetAvailableModels() {
+		if m.ID == modelID {
+			model = &m
+			break
+		}
+	}
+
+	if model == nil {
+		response.Content = "Error: Model not found"
+		return response
+	}
+
+	response.Provider = model.Provider
+
+	// Get API key for provider
+	apiKey, err := storage.GetAPIKey(userID, model.Provider)
+	if err != nil {
+		response.Content = "Error: API key not found for " + model.Provider
+		return response
+	}
+
+	// Generate response based on provider
+	var content string
+	switch model.Provider {
+	case "Google":
+		content, err = callGemini(apiKey.Key, prompt)
+	case "OpenRouter":
+		content, err = callOpenRouter(apiKey.Key, modelID, prompt)
+	case "HuggingFace":
+		content, err = callHuggingFace(apiKey.Key, modelID, prompt)
+	default:
+		err = fmt.Errorf("unsupported provider: %s", model.Provider)
+	}
+
+	if err != nil {
+		response.Content = "Error: " + err.Error()
+	} else {
+		response.Content = content
+	}
+
+	return response
+}
+
+func generateChatTitle(prompt string) string {
+	if len(prompt) > 50 {
+		return prompt[:47] + "..."
+	}
+	return prompt
+}

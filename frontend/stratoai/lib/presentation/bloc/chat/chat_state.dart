@@ -11,6 +11,14 @@ class ChatInitial extends ChatState {}
 
 class ChatLoading extends ChatState {}
 
+class ChatsLoaded extends ChatState {
+  final List<Chat> chats;
+
+  const ChatsLoaded(this.chats);
+
+  @override
+  List<Object> get props => [chats];
+}
 class ChatLoaded extends ChatState {
   final Chat chat;
 
@@ -30,6 +38,7 @@ class ChatHistoryLoaded extends ChatState {
   @override
   List<Object> get props => [chats];
 }
+class MessageSending extends ChatState {}
 
 class ChatError extends ChatState {
   final String message;

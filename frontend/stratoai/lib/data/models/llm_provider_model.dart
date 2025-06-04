@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'llm_model.g.dart';
 
 @JsonSerializable()
 class LLMModel extends Equatable {
@@ -79,4 +80,6 @@ class APIKey extends Equatable {
 
   Map<String, dynamic> toJson() => _$APIKeyToJson(this);
 
+  @override
+  List<Object?> get props => [id, userId, provider, key, createdAt];
 }

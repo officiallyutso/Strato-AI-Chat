@@ -65,3 +65,16 @@ func GetAvailableModels() []LLMModel {
 		},
 	}
 }
+
+type PromptRequest struct {
+	UserID   string   `json:"user_id"`
+	ChatID   string   `json:"chat_id,omitempty"`
+	Prompt   string   `json:"prompt"`
+	ModelIDs []string `json:"model_ids"`
+}
+
+type PromptResponse struct {
+	ChatID    string             `json:"chat_id"`
+	MessageID string             `json:"message_id"`
+	Responses []models.Response  `json:"responses"`
+}

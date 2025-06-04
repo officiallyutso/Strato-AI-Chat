@@ -1,54 +1,63 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import '../../domain/entities/chat.dart';
 
-part 'chat_model.g.dart';
-
-@JsonSerializable(explicitToJson: true)
-class ChatModel extends Chat {
-  ChatModel({
-    required String id,
-    required String userId,
-    required String prompt,
-    required List<ResponseModel> responses,
-    String? selectedId,
-    required DateTime createdAt,
-    List<String>? chainedChats,
-  }) : super(
-          id: id,
-          userId: userId,
-          prompt: prompt,
-          responses: responses,
-          selectedId: selectedId,
-          createdAt: createdAt,
-          chainedChats: chainedChats ?? [],
-        );
-
-  factory ChatModel.fromJson(Map<String, dynamic> json) =>
-      _$ChatModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$ChatModelToJson(this);
-}
+part 'chat.g.dart';
 
 @JsonSerializable()
-class ResponseModel extends Response {
-  ResponseModel({
-    required String id,
-    required String provider,
-    required String model,
-    required String content,
-    required DateTime createdAt,
-    String? error,
-  }) : super(
-          id: id,
-          provider: provider,
-          model: model,
-          content: content,
-          createdAt: createdAt,
-          error: error,
-        );
+class Chat extends Equatable {
+  final String id;
+  @JsonKey(name: 'user_id')
+  final String userId;
+  final String title;
+  final List<Message> messages;
+  @JsonKey(name: 'created_at')
+  final DateTime createdAt;
+  @JsonKey(name: 'updated_at')
+  final DateTime updatedAt;
+  @JsonKey(name: 'selected_id')
+  final String? selectedId;
 
-  factory ResponseModel.fromJson(Map<String, dynamic> json) =>
-      _$ResponseModelFromJson(json);
+  const Chat({
+    required this.id,
+    required this.userId,
+    required this.title,
+    required this.messages,
+    required this.createdAt,
+    required this.updatedAt,
+    this.selectedId,
+  });
 
-  Map<String, dynamic> toJson() => _$ResponseModelToJson(this);
+  factory Chat.fromJson(Map<String, dynamic> json) => _$ChatFromJson(json);
+  Map<String, dynamic> toJson() => _$ChatToJson(this);
+
+  @override
+  List<Object?> get props => [
+        id,
+        userId,
+        title,
+        messages,
+        createdAt,
+        updatedAt,
+        selectedId,
+      ];
+
+  Chat copyWith({
+    String? id,
+    String? userId,
+    String? title,
+    List<Message>? messages,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? selectedId,
+  }) {
+    return Chat(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      title: title ?? this.title,
+      messages: messages ?? this.messages,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      selectedId: selectedId ?? this.selectedId,
+    );
+  }
 }

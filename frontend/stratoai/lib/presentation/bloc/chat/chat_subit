@@ -1,0 +1,84 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:stratoai/data/models/chat.dart';
+import 'package:stratoai/data/models/llm_model.dart';
+import 'package:stratoai/data/datasources/api_service.dart';
+
+part 'chat_state.dart';
+
+class ChatCubit extends Cubit<ChatState> {
+  final ApiService _apiService;
+  final String userId;
+
+  ChatCubit({
+    required ApiService apiService,
+    required this.userId,
+  }) : _apiService = apiService, super(ChatInitial());
+
+  Future<void> loadChats() async {
+    try {
+      emit(ChatLoading());
+      final chats = await _apiService.getUserChats(userId);
+      emit(ChatsLoaded(chats));
+    } catch (e) {
+      emit(ChatError(e.toString()));
+    }
+  }
+
+  Future<void> loadChat(String chatId) async {
+    try {
+      emit(ChatLoading());
+      final chat = await _apiService.getChat(chatId);
+      emit(ChatLoaded(chat));
+    } catch (e) {
+      emit(ChatError(e.toString()));
+    }
+  }
+
+  Future<void> sendMessage({
+    String? chatId,
+    required String prompt,
+    required List<String> modelIds,
+  }) async {
+    try {
+      emit(MessageSending());
+      
+      final response = await _apiService.sendPrompt(
+        userId: userId,
+        chatId: chatId,
+        prompt: prompt,
+        modelIds: modelIds,
+      );
+      
+      // Load the updated chat
+      final updatedChat = await _apiService.getChat(response.chatId);
+      emit(ChatLoaded(updatedChat));
+    } catch (e) {
+      emit(ChatError(e.toString()));
+    }
+  }
+
+  void selectResponse(Chat chat, String messageId, String responseId) {
+    final updatedMessages = chat.messages.map((message) {
+      if (message.id == messageId) {
+        return message.copyWith(responses: message.responses?.map((response) {
+          return response.copyWith();
+        }).toList());
+      }
+      return message;
+    }).toList();
+
+    final updatedChat = chat.copyWith(
+      messages: updatedMessages,
+      selectedId: responseId,
+    );
+
+    emit(ChatLoaded(updatedChat));
+  }
+
+  void clearError() {
+    if (state is ChatError) {
+      emit(ChatInitial());
+    }
+  }
+}

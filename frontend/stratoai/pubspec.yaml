@@ -10,17 +10,38 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
+  # State Management
   flutter_bloc: ^8.1.3
-  firebase_core: ^2.25.3
-  firebase_auth: ^4.16.3
-  cloud_firestore: ^4.15.4
   http: ^1.2.0
   equatable: ^2.0.5
-  json_annotation: ^4.9.0
+  
+  # Firebase
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.15.3
+  cloud_firestore: ^4.13.6
+  
+  # HTTP & API
+  dio: ^5.3.2
+  json_annotation: ^4.8.1
+  
+  # UI Components
+  cupertino_icons: ^1.0.2
+  flutter_markdown: ^0.6.18
+  cached_network_image: ^3.3.0
+  
+  # Utilities
+  shared_preferences: ^2.2.2
+  uuid: ^4.2.1
+  intl: ^0.18.1
 
 dev_dependencies:
-  build_runner: ^2.4.8
-  json_serializable: ^6.8.0
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  json_serializable: ^6.7.1
+  build_runner: ^2.4.7
 
+  
 flutter:
   uses-material-design: true

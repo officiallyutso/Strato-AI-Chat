@@ -1,28 +1,57 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import '../../domain/entities/llm_provider.dart';
 
-part 'llm_provider_model.g.dart';
 
 @JsonSerializable()
-class LlmProviderModel extends LlmProvider {
-  LlmProviderModel({
-    required String id,
-    required String name,
-    required String description,
-    required List<String> models,
-    required bool requiresKey,
-    String? endpoint,
-  }) : super(
-          id: id,
-          name: name,
-          description: description,
-          models: models,
-          requiresKey: requiresKey,
-          endpoint: endpoint,
-        );
+class LLMModel extends Equatable {
+  final String id;
+  final String name;
+  final String provider;
+  final String description;
+  @JsonKey(name: 'icon_path')
+  final String iconPath;
+  @JsonKey(name: 'is_available')
+  final bool isAvailable;
 
-  factory LlmProviderModel.fromJson(Map<String, dynamic> json) =>
-      _$LlmProviderModelFromJson(json);
+  const LLMModel({
+    required this.id,
+    required this.name,
+    required this.provider,
+    required this.description,
+    required this.iconPath,
+    this.isAvailable = true,
+  });
 
-  Map<String, dynamic> toJson() => _$LlmProviderModelToJson(this);
+  factory LLMModel.fromJson(Map<String, dynamic> json) =>
+      _$LLMModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LLMModelToJson(this);
+
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        provider,
+        description,
+        iconPath,
+        isAvailable,
+      ];
+
+  LLMModel copyWith({
+    String? id,
+    String? name,
+    String? provider,
+    String? description,
+    String? iconPath,
+    bool? isAvailable,
+  }) {
+    return LLMModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      provider: provider ?? this.provider,
+      description: description ?? this.description,
+      iconPath: iconPath ?? this.iconPath,
+      isAvailable: isAvailable ?? this.isAvailable,
+    );
+  }
 }

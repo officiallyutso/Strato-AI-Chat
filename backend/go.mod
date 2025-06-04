@@ -8,6 +8,7 @@ require (
 	github.com/gin-gonic/gin v1.10.1
 	github.com/google/uuid v1.6.0
 	google.golang.org/api v0.235.0
+	firebase.google.com/go/v4 v4.12.1
 )
 
 require (

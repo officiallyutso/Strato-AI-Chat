@@ -4,6 +4,8 @@ import '../bloc/auth/auth_cubit.dart';
 import '../bloc/models/models_cubit.dart';
 import '../bloc/models/models_state.dart';
 import '../../core/di/injection.dart' as di;
+import 'new_chat_screen.dart';
+import '../widgets/model_card.dart';
 
 class ModelSelectionScreen extends StatefulWidget {
   const ModelSelectionScreen({Key? key}) : super(key: key);
@@ -128,5 +130,39 @@ class _ModelSelectionScreenState extends State<ModelSelectionScreen> {
     );
   }
 
-
+  Widget _buildErrorState(String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 80,
+            color: Colors.red[400],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Error loading models',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              color: Colors.red[600],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () => _modelsCubit.loadModels(),
+            icon: const Icon(Icons.refresh),
+            label: const Text('Retry'),
+          ),
+        ],
+      ),
+    );
+  }
 }

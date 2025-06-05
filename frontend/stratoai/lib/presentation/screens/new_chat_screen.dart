@@ -5,6 +5,7 @@ import '../bloc/chat/chat_state.dart';
 import '../../domain/entities/llm_provider.dart';
 import '../../core/di/injection.dart' as di;
 import 'chat_screen.dart';
+import '../widgets/model_chip.dart';
 
 class NewChatScreen extends StatefulWidget {
   final List<LlmProvider> selectedModels;

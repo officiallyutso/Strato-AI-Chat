@@ -1,41 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stratoai/presentation/bloc/auth/auth_state.dart';
+import 'core/di/injection.dart' as di;
+import 'core/theme/app_theme.dart';
+import 'core/constants/app_constants.dart';
 import 'presentation/bloc/auth/auth_cubit.dart';
 import 'presentation/screens/login_screen.dart';
+import 'presentation/screens/home_screen.dart';
 import 'presentation/screens/chat_screen.dart';
+import 'presentation/screens/model_selection_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await di.init();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthCubit>(
+          create: (context) => di.sl<AuthCubit>(),
+        ),
+      ],
       child: MaterialApp(
-        title: 'StratoAI',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: BlocConsumer<AuthCubit, AuthState>(
-          listener: (context, state) {
-            // No additional navigation needed here as screens handle their own navigation
-          },
-          builder: (context, state) {
-            if (state is Authenticated) {
-              return const ChatScreen();
-            }
-            return const LoginScreen();
-          },
-        ),
+        title: AppConstants.appName,
+        theme: AppTheme.lightTheme,
+        initialRoute: AppConstants.loginRoute,
+        routes: {
+          AppConstants.loginRoute: (context) => const LoginScreen(),
+          AppConstants.homeRoute: (context) => const HomeScreen(),
+          AppConstants.chatRoute: (context) => const ChatScreen(),
+          AppConstants.modelSelectionRoute: (context) => const ModelSelectionScreen(),
+        },
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

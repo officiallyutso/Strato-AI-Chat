@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stratoai/presentation/bloc/models/models_state.dart';
 import '../bloc/auth/auth_cubit.dart';
 import '../bloc/chat/chat_cubit.dart';
 import '../bloc/chat/chat_state.dart';
@@ -31,12 +32,14 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     _chatCubit = di.sl<ChatCubit>();
     if (widget.chatId != null) {
+      // Load existing chat
       _loadChat();
     }
   }
 
   void _loadChat() {
-    ///load kr rha chat list se.
+    // Implementation depends on your backend API
+    // For now, we'll load from the chats list
   }
 
   @override

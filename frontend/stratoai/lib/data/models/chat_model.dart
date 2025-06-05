@@ -138,18 +138,21 @@ class Response extends Equatable {
     );
   }
 }
+
+// Assuming you have a ChatModel class defined elsewhere
+// This extension converts from ChatModel to Chat
 extension ChatModelX on Chat {
-  static Chat fromModel(ChatModel model) {
+  static Chat fromModel(dynamic model) {
     return Chat(
       id: model.id,
       userId: model.userId,
       title: model.title,
-      messages: model.messages.map((m) => Message(
+      messages: (model.messages as List).map<Message>((m) => Message(
         id: m.id,
         content: m.content,
         role: m.role,
         timestamp: m.timestamp,
-        responses: m.responses?.map((r) => Response(
+        responses: m.responses?.map<Response>((r) => Response(
           id: r.id,
           modelId: r.modelId,
           content: r.content,

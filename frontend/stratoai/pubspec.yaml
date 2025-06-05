@@ -28,7 +28,6 @@ dependencies:
   # UI Components
   cupertino_icons: ^1.0.2
   flutter_markdown: ^0.6.18
-  cached_network_image: ^3.3.0
   
   # Utilities
   shared_preferences: ^2.2.2

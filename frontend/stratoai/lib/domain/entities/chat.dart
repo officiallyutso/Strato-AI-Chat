@@ -48,4 +48,6 @@ class Response {
     required this.provider,
     this.error,
   });
+
+  get timestamp => null;
 }

@@ -2,6 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../domain/entities/chat.dart';
 
+
+class MessageResponse {
+  final String modelId;
+  final String content;
+  final DateTime? timestamp;
+
+  MessageResponse({
+    required this.modelId,
+    required this.content,
+    this.timestamp,
+  });
+}
+
 class ResponseCard extends StatefulWidget {
   final MessageResponse response;
   final VoidCallback onChain;

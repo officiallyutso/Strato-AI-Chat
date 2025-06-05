@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:stratoai/domain/entities/llm_provider.dart';
+import '../../domain/entities/llm_provider.dart';
 
-part 'llm_model.g.dart';
+part 'llm_provider_model.g.dart';
 
 @JsonSerializable()
 class LLMModel extends Equatable {
@@ -26,7 +26,7 @@ class LLMModel extends Equatable {
 
   factory LLMModel.fromJson(Map<String, dynamic> json) =>
       _$LLMModelFromJson(json);
-
+  
   Map<String, dynamic> toJson() => _$LLMModelToJson(this);
 
   @override
@@ -78,12 +78,29 @@ class APIKey extends Equatable {
 
   factory APIKey.fromJson(Map<String, dynamic> json) =>
       _$APIKeyFromJson(json);
-
+  
   Map<String, dynamic> toJson() => _$APIKeyToJson(this);
 
   @override
   List<Object?> get props => [id, userId, provider, key, createdAt];
+
+  APIKey copyWith({
+    String? id,
+    String? userId,
+    String? provider,
+    String? key,
+    DateTime? createdAt,
+  }) {
+    return APIKey(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      provider: provider ?? this.provider,
+      key: key ?? this.key,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }
+
 extension LlmProviderModelX on LLMModel {
   LlmProvider toEntity() {
     return LlmProvider(

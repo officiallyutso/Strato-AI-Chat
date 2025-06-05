@@ -2,7 +2,6 @@ package storage
 
 import (
 	"context"
-	"cloud.google.com/go/firestore"
 	"github.com/officiallyutso/strato-ai-backend/internal/models"
 )
 

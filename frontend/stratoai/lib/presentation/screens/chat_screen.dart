@@ -7,6 +7,8 @@ import '../bloc/models/models_cubit.dart';
 import '../../core/di/injection.dart' as di;
 import '../../domain/entities/chat.dart';
 import '../../domain/entities/llm_provider.dart';
+import '../widgets/message_bubble.dart';
+import '../widgets/response_card.dart';
 import 'model_selection_screen.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -34,7 +36,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _loadChat() {
-    ///load kr rha chat list se.c
+    ///load kr rha chat list se.
   }
 
   @override
@@ -413,6 +415,4 @@ class _ModelSelectionForChainingState extends State<ModelSelectionForChaining> {
       ),
     );
   }
-
-
 }

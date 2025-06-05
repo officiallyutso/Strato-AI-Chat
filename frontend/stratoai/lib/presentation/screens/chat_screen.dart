@@ -76,6 +76,48 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  void _chainResponse(String responseContent) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        maxChildSize: 0.9,
+        minChildSize: 0.5,
+        builder: (context, scrollController) => Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Text(
+                'Chain Response to Other Models',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ModelSelectionForChaining(
+                  originalResponse: responseContent,
+                  onModelsSelected: (selectedModels) {
+                    Navigator.pop(context);
+                    final modelIds = selectedModels.map((m) => m.id).toList();
+                    _sendMessage(additionalModelIds: modelIds);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -138,3 +138,27 @@ class Response extends Equatable {
     );
   }
 }
+extension ChatModelX on Chat {
+  static Chat fromModel(ChatModel model) {
+    return Chat(
+      id: model.id,
+      userId: model.userId,
+      title: model.title,
+      messages: model.messages.map((m) => Message(
+        id: m.id,
+        content: m.content,
+        role: m.role,
+        timestamp: m.timestamp,
+        responses: m.responses?.map((r) => Response(
+          id: r.id,
+          modelId: r.modelId,
+          content: r.content,
+          provider: r.provider,
+        )).toList(),
+      )).toList(),
+      createdAt: model.createdAt,
+      updatedAt: model.updatedAt,
+      selectedId: model.selectedId,
+    );
+  }
+}

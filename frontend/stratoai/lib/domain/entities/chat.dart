@@ -1,37 +1,51 @@
 class Chat {
   final String id;
   final String userId;
-  final String prompt;
-  final List<Response> responses;
-  final String? selectedId;
+  final String title;
+  final List<Message> messages;
   final DateTime createdAt;
-  final List<String> chainedChats;
+  final DateTime updatedAt;
+  final String? selectedId;
 
-  Chat({
+  const Chat({
     required this.id,
     required this.userId,
-    required this.prompt,
-    required this.responses,
-    this.selectedId,
+    required this.title,
+    required this.messages,
     required this.createdAt,
-    required this.chainedChats,
+    required this.updatedAt,
+    this.selectedId,
+  });
+}
+
+class Message {
+  final String id;
+  final String content;
+  final String role;
+  final DateTime timestamp;
+  final List<Response>? responses;
+
+  const Message({
+    required this.id,
+    required this.content,
+    required this.role,
+    required this.timestamp,
+    this.responses,
   });
 }
 
 class Response {
   final String id;
-  final String provider;
-  final String model;
+  final String modelId;
   final String content;
-  final DateTime createdAt;
+  final String provider;
   final String? error;
 
-  Response({
+  const Response({
     required this.id,
-    required this.provider,
-    required this.model,
+    required this.modelId,
     required this.content,
-    required this.createdAt,
+    required this.provider,
     this.error,
   });
 }

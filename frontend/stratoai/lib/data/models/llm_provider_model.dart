@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:stratoai/domain/entities/llm_provider.dart';
 
 part 'llm_model.g.dart';
 
@@ -82,4 +83,16 @@ class APIKey extends Equatable {
 
   @override
   List<Object?> get props => [id, userId, provider, key, createdAt];
+}
+extension LlmProviderModelX on LLMModel {
+  LlmProvider toEntity() {
+    return LlmProvider(
+      id: id,
+      name: name,
+      provider: provider,
+      description: description,
+      iconPath: iconPath,
+      isAvailable: isAvailable,
+    );
+  }
 }

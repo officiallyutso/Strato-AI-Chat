@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stratoai/presentation/bloc/auth/auth_state.dart';
 import 'presentation/bloc/auth/auth_cubit.dart';
 import 'presentation/screens/login_screen.dart';
 import 'presentation/screens/chat_screen.dart';

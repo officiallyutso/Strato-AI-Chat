@@ -4,6 +4,9 @@ import '../bloc/auth/auth_cubit.dart';
 import '../bloc/chat/chat_cubit.dart';
 import '../bloc/chat/chat_state.dart';
 import '../../core/di/injection.dart' as di;
+import 'model_selection_screen.dart';
+import 'chat_screen.dart';
+import '../widgets/chat_tile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -141,6 +144,44 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
-
+  Widget _buildErrorState(String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 80,
+            color: Colors.red[400],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Error loading chats',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              color: Colors.red[600],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () {
+              final authCubit = context.read<AuthCubit>();
+              if (authCubit.currentUserId != null) {
+                _chatCubit.loadChats(authCubit.currentUserId!);
+              }
+            },
+            icon: const Icon(Icons.refresh),
+            label: const Text('Retry'),
+          ),
+        ],
+      ),
+    );
+  }
 }

@@ -1,50 +1,23 @@
-part of 'chat_bloc.dart';
+import '../../../domain/entities/chat.dart';
 
-abstract class ChatState extends Equatable {
-  const ChatState();
-  
-  @override
-  List<Object> get props => [];
-}
+abstract class ChatState {}
 
 class ChatInitial extends ChatState {}
-
 class ChatLoading extends ChatState {}
-
 class ChatsLoaded extends ChatState {
   final List<Chat> chats;
-
-  const ChatsLoaded(this.chats);
-
-  @override
-  List<Object> get props => [chats];
+  ChatsLoaded(this.chats);
 }
 class ChatLoaded extends ChatState {
   final Chat chat;
-
-  const ChatLoaded(this.chat);
-
-  @override
-  List<Object> get props => [chat];
+  ChatLoaded(this.chat);
 }
-
-class ChatHistoryLoading extends ChatState {}
-
-class ChatHistoryLoaded extends ChatState {
-  final List<Chat> chats;
-
-  const ChatHistoryLoaded(this.chats);
-
-  @override
-  List<Object> get props => [chats];
-}
-class MessageSending extends ChatState {}
-
 class ChatError extends ChatState {
   final String message;
-
-  const ChatError(this.message);
-
-  @override
-  List<Object> get props => [message];
+  ChatError(this.message);
+}
+class MessageSending extends ChatState {}
+class MessageSent extends ChatState {
+  final Chat updatedChat;
+  MessageSent(this.updatedChat);
 }

@@ -34,7 +34,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _loadChat() {
-    ///load kr rha chat list se.
+    ///load kr rha chat list se.c
   }
 
   @override
@@ -260,6 +260,21 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
+class ModelSelectionForChaining extends StatefulWidget {
+  final String originalResponse;
+  final Function(List<LlmProvider>) onModelsSelected;
+
+  const ModelSelectionForChaining({
+    Key? key,
+    required this.originalResponse,
+    required this.onModelsSelected,
+  }) : super(key: key);
+
+  @override
+  _ModelSelectionForChainingState createState() => _ModelSelectionForChainingState();
+}
+
+class _ModelSelectionForChainingState extends State<ModelSelectionForChaining> {
   late ModelsCubit _modelsCubit;
 
   @override

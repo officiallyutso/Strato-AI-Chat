@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'chat.g.dart';
+part 'chat_model.g.dart';
 
 @JsonSerializable()
 class Chat extends Equatable {

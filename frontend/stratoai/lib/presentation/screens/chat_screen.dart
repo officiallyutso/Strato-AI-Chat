@@ -176,23 +176,6 @@ class _ChatScreenState extends State<ChatScreen> {
                       itemCount: currentChat!.messages.length,
                       itemBuilder: (context, index) {
                         final message = currentChat!.messages[index];
-                        
-                        if (message.role == 'user') {
-                          return MessageBubble(
-                            content: message.content,
-                            isUser: true,
-                            timestamp: message.timestamp,
-                          );
-                        } else {
-                          return Column(
-                            children: message.responses?.map((response) {
-                              return ResponseCard(
-                                response: response,
-                                onChain: () => _chainResponse(response.content),
-                              );
-                            }).toList() ?? [],
-                          );
-                        }
                       },
                     );
                   },

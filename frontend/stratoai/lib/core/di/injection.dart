@@ -9,6 +9,12 @@ import '../../data/repositories/api_key_repository_impl.dart';
 import '../../domain/repositories/chat_repository.dart';
 import '../../domain/repositories/llm_provider_repository.dart';
 import '../../domain/repositories/api_key_repository.dart';
+import '../../domain/usecases/get_chat.dart';
+import '../../domain/usecases/send_prompt.dart';
+import '../../domain/usecases/get_model_usecases.dart';
+import '../../domain/usecases/save_api_key.dart';
+import '../../presentation/bloc/chat/chat_cubit.dart';
+import '../../presentation/bloc/models/models_cubit.dart';
 import '../constants/app_constants.dart';
 
 final GetIt sl = GetIt.instance;
@@ -51,4 +57,18 @@ Future<void> init() async {
   sl.registerLazySingleton<ApiKeyRepository>(
     () => ApiKeyRepositoryImpl(remoteDataSource: sl()),
   );
+
+  // Use cases
+  sl.registerLazySingleton(() => GetChat(sl()));
+  sl.registerLazySingleton(() => SendPrompt(sl()));
+  sl.registerLazySingleton(() => GetModelsUsecase(sl()));
+  sl.registerLazySingleton(() => SaveApiKey(sl()));
+
+  // BLoC
+  sl.registerFactory(() => ChatCubit(
+    getChatsUsecase: sl(),
+    sendPromptUsecase: sl(),
+  ));
+
+  sl.registerFactory(() => ModelsCubit(getModelsUsecase: sl()));
 }

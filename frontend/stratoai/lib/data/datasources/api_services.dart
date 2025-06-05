@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' hide Response;
 import 'package:stratoai/data/models/chat_model.dart';
 import 'package:stratoai/data/models/llm_provider_model.dart';
 

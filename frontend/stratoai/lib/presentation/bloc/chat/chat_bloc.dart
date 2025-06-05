@@ -5,9 +5,9 @@ import '../../../domain/usecases/send_prompt.dart';
 import '../../../domain/usecases/get_user_chats.dart';
 import '../../../domain/usecases/get_chat.dart';
 import '../../../domain/usecases/select_response.dart';
-
+import 'chat_state.dart';
+import 'chat_cubit.dart';
 part 'chat_event.dart';
-part 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final SendPrompt sendPrompt;
@@ -22,7 +22,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     required this.selectResponse,
   }) : super(ChatInitial()) {
     on<SendPromptEvent>(_onSendPrompt);
-    on<GetUserChatsEvent>(_onGetUserChats);
     on<GetChatEvent>(_onGetChat);
     on<SelectResponseEvent>(_onSelectResponse);
   }
@@ -37,15 +36,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
   }
 
-  Future<void> _onGetUserChats(GetUserChatsEvent event, Emitter<ChatState> emit) async {
-    emit(ChatHistoryLoading());
-    try {
-      final chats = await getUserChats(event.userId);
-      emit(ChatHistoryLoaded(chats));
-    } catch (e) {
-      emit(ChatError(e.toString()));
-    }
-  }
+  
 
   Future<void> _onGetChat(GetChatEvent event, Emitter<ChatState> emit) async {
     emit(ChatLoading());

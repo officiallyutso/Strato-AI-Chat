@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stratoai/presentation/bloc/auth/auth_state.dart';
 import '../bloc/auth/auth_cubit.dart';
 import 'chat_screen.dart';
 
